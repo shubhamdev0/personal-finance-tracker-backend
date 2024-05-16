@@ -10,7 +10,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     services:
@@ -21,7 +20,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: personal_finance_tracker_test
+          POSTGRES_DB: personal_finance_tracker_dev
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -29,11 +28,11 @@ jobs:
           --health-retries 5
 
     env:
-      DB_HOST: ${{ secrets.DB_HOST_DEV }}
-      DB_PORT: ${{ secrets.DB_PORT_DEV }}
-      DB_USERNAME: ${{ secrets.DB_USERNAME_DEV }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD_DEV }}
-      DB_NAME: ${{ secrets.DB_NAME_DEV }}
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
+      DB_NAME: personal_finance_tracker_dev
       JWT_SECRET: ${{ secrets.JWT_SECRET_DEV }}
       NODE_ENV: development
 
@@ -54,6 +53,12 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t personal-finance-tracker-backend .
+
+      - name: Tag Docker image
+        run: docker tag personal-finance-tracker-backend:latest your_dockerhub_username/personal-finance-tracker-backend:latest
+
+      - name: Log in to Docker Hub
+        run: echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
       - name: Push Docker image to Docker Hub
         run: docker push your_dockerhub_username/personal-finance-tracker-backend:latest
