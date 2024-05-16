@@ -13,7 +13,11 @@ describe('AuthService', () => {
   beforeEach(async () => {
     usersService = {
       // Mock methods you need for testing
-      findByUsername: jest.fn().mockResolvedValue({ id: 1, username: 'testuser', password: 'hashedPassword' }),
+      findByUsername: jest.fn().mockResolvedValue({
+        id: 1,
+        username: 'testuser',
+        password: 'hashedPassword',
+      }),
     };
 
     const module: TestingModule = await Test.createTestingModule({
