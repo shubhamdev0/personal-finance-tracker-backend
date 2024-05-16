@@ -29,13 +29,13 @@ jobs:
           --health-retries 5
 
     env:
-      DB_HOST: localhost
-      DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: password
-      DB_NAME: personal_finance_tracker_test
-      JWT_SECRET: your_secret_key
-      NODE_ENV: test
+      DB_HOST: ${{ secrets.DB_HOST_DEV }}
+      DB_PORT: ${{ secrets.DB_PORT_DEV }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME_DEV }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD_DEV }}
+      DB_NAME: ${{ secrets.DB_NAME_DEV }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET_DEV }}
+      NODE_ENV: development
 
     steps:
       - name: Checkout code
@@ -60,3 +60,26 @@ jobs:
         env:
           DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    env:
+      DB_HOST: ${{ secrets.DB_HOST_DEV }}
+      DB_PORT: ${{ secrets.DB_PORT_DEV }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME_DEV }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD_DEV }}
+      DB_NAME: ${{ secrets.DB_NAME_DEV }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET_DEV }}
+      NODE_ENV: development
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to Vercel
+        run: |
+          npm install -g vercel
+          vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
